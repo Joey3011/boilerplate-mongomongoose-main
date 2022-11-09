@@ -35,9 +35,9 @@ const createManyPeople = (arrayOfPeople, done) => {
 };
 
 const findPeopleByName = (personName, done) => {
-  Person.find( {name: personName}, (err, foundPerson) => {
+  Person.find( {name: personName}, (err, findPersonByName) => {
     if(err) return console.log(err)
-    done(null ,foundPerson);
+    done(null ,findPersonByName);
   })
 };
 
@@ -68,9 +68,13 @@ const findEditThenSave = (personId, done) => {
 };
 
 const findAndUpdate = (personName, done) => {
-  const ageToSet = 20;
-
-  done(null /*, data*/);
+  let newQuery = {name: personName}
+  let newUpdate = {age: 20}
+  let options = { new: true }
+  Person.findOneAndUpdate(newQuery, newUpdate, options, (err, findPersonName) =>{
+    if(err) return console.log(err)
+    done(null , findPersonName);
+  })
 };
 
 const removeById = (personId, done) => {
