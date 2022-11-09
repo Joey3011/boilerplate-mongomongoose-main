@@ -3,32 +3,68 @@ const mongoose = require('mongoose')
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-let Person;
+const personSchema = new mongoose.Schema({
+    name : {
+      type: String,
+     required: true
+    },
+    age :  Number,
+    favoriteFoods : [String]
+})
+
+let Person = mongoose.model('Person', personSchema)
+
 
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+  let joey = new Person({name: 'Joey', age: 22, favoriteFoods: ['Pizza', 'Spaghetti']})
+  joey.save((err, data) => {
+    if(err){
+      console.log(err)
+    }
+    done(null , data);
+  })
 };
 
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+
+  Person.create(arrayOfPeople,(err, peopleCreated) => {
+    if(err) return console.log(err)
+    done(null ,peopleCreated);
+  })
+  
 };
 
 const findPeopleByName = (personName, done) => {
-  done(null /*, data*/);
+  Person.find( {name: personName}, (err, foundPerson) => {
+    if(err) return console.log(err)
+    done(null ,foundPerson);
+  })
 };
 
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+  Person.findOne({favorite: Person.food}, (err, favoriteFood) => {
+    if(err) return console.log(err)
+    done(null , favoriteFood);
+  })
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById(personId, (err, peopleID) => {
+    if(err) return console.log(err)
+    done(null , peopleID);
+  }) 
 };
 
 const findEditThenSave = (personId, done) => {
   const foodToAdd = "hamburger";
-
-  done(null /*, data*/);
+  Person.findById(personId, (err, editFood) => {
+    if(err) return console.log(err)
+    editFood.favoriteFoods.push(foodToAdd)
+    editFood.save((err, data) => {
+      if(err) return console.log(err)
+      done(null , data);
+    })
+  })
 };
 
 const findAndUpdate = (personName, done) => {
@@ -70,3 +106,4 @@ exports.createManyPeople = createManyPeople;
 exports.removeById = removeById;
 exports.removeManyPeople = removeManyPeople;
 exports.queryChain = queryChain;
+
